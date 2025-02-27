@@ -9,7 +9,7 @@ namespace SecurityLibrary
     public class AutokeyVigenere : ICryptographicTechnique<string, string>
     {
         public string Analyse(string plainText, string cipherText)
-        {   if () ;
+        {  
             throw new NotImplementedException();
         }
 
