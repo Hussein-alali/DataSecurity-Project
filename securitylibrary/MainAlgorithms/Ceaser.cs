@@ -35,11 +35,12 @@ namespace SecurityLibrary
           //  throw new NotImplementedException();
             return Encrypt(cipherText, 26 - (key % 26));
         }
-
         public int Analyse(string plainText, string cipheredText)
         {
-          //throw new NotImplementedException();
-            int key = (cipheredText[0] - plainText[0] + 26) % 26;
+            char p = char.ToUpper(plainText[0]);
+            char c = char.ToUpper(cipheredText[0]);
+
+            int key = (c - p + 26) % 26;
             return key;
         }
     }
