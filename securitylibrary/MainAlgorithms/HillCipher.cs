@@ -19,6 +19,33 @@ namespace SecurityLibrary
 
         public List<int> Decrypt(List<int> cipherText, List<int> key)
         {
+
+            int Mat = (int)Math.Sqrt(key.Count);
+
+            if (Mat ==2)
+            {
+                
+
+
+
+
+            }
+            else if(Mat == 3)
+            {
+                
+
+
+
+
+
+
+            }
+
+
+
+
+
+
             throw new NotImplementedException();
         }
 
@@ -26,18 +53,21 @@ namespace SecurityLibrary
         public List<int> Encrypt(List<int> plainText, List<int> key)
         {
 
-            int Mat = (int)Math.Sqrt(key.count);
+            int Mat = (int)Math.Sqrt(key.Count);
 
-            List<int> cryptText = new List<int>(new int[Mat]);
+            List<int> cryptText = new List<int>();
 
-            for (int i = 0; i < Mat; i++)
+            for (int i = 0; i < plainText.Count; i+=Mat)
             {
-                int sumofmult = 0;
-                for (int j = 0; j < Mat; j++)
+                for (int z = 0; z < Mat; z++)
                 {
-                    sumofmult += key[i * size + j] * plainText[j]; 
+                    int sumofmult = 0;
+                    for (int j = 0; j < Mat; j++)
+                    {
+                        sumofmult += key[z * Mat + j] * plainText[i+j];
+                    }
+                    cryptText.Add(sumofmult % 26);
                 }
-                cryptText[i] = sumofmult % 26; 
             }
             return cryptText;
         }
