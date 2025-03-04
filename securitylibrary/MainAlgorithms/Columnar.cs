@@ -15,91 +15,76 @@ namespace SecurityLibrary
 
         public string Decrypt(string cipherText, List<int> key)
         {
-            char[] cipherTextchars = cipherText.ToCharArray();
-            int width = key.Max();
-            int depth = cipherTextchars.Length / width;
-            char[,] matrix = new char[depth + 1, width];
-            char[,] matrix2 = new char[depth , width];
-            char[] PLchars = new char[cipherTextchars.Length];
-            int index = 0;
+            int width = key.Count();
+            int depth = cipherText.Length / width;
+            char[,] matrix = new char[depth, width];
+
+            Dictionary<int, int> keyMapping = new Dictionary<int, int>();
             for (int j = 0; j < width; j++)
             {
+                keyMapping[key[j]] = j;
+            }
+
+            int index = 0;
+            foreach (var column in key.OrderBy(k => k))
+            {
+                int j = keyMapping[column];
                 for (int i = 0; i < depth; i++)
                 {
-                    matrix[i, j] = cipherText[index];
-                    index++;
+                    matrix[i, j] = cipherText[index++];
                 }
             }
-            for (int j = 0; j < width; j++)
-            {
-                matrix[depth, j] = (char)(j+1);
-            }
-            int count = 1;
-            for (int j = 0; count <= width; j++)
-            {
-                if (matrix[depth, j% width] == (char)key.ElementAt(j % width))
-                {
-                    for (int i = 0; i < depth; i++)
-                    {
-                        matrix2[i, j % width] = matrix[i, j % width];
-                        count++;
-                    }
-                }
-            }
-            int indx = 0;
+
+            StringBuilder plainText = new StringBuilder();
             for (int i = 0; i < depth; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    PLchars[indx] = matrix2[i, j];
-                    indx++;
+                    plainText.Append(matrix[i, j]);
                 }
             }
-                    return PLchars.ToString();
+
+            return plainText.ToString().TrimEnd('x');
         }
 
         public string Encrypt(string plainText, List<int> key)
         {
-            char[] PTchars = plainText.ToCharArray();
-            int width = key.Max();
-            int arrindex = PTchars.Length;
-            while (PTchars.Length % width != 0)
+            while (plainText.Length % key.Count() != 0)
             {
-                PTchars[arrindex] = 'x';
-                arrindex++;
+                plainText += 'x';
             }
-            char[] CTchars = new char[arrindex];
-            int depth = PTchars.Length/ width;
-            char[,] matrix = new char[depth+1, width];
+
+            char[] PTchars = plainText.ToCharArray();
+            int width = key.Count();
+            int depth = plainText.Length / width;
+            char[,] matrix = new char[depth, width];
+
             int index = 0;
-            for (int i=0;i< depth;i++)
+            for (int i = 0; i < depth; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    matrix[i,j]= PTchars[index];
-                    index++;
+                    matrix[i, j] = PTchars[index++];
                 }
             }
+
+            Dictionary<int, int> keyMapping = new Dictionary<int, int>();
             for (int j = 0; j < width; j++)
             {
-                matrix[depth, j] =(char)key.ElementAt(j);
-            }
-            int search = 1;
-            int CTindex = 0;
-            for (int j = 0; search <= width; j++)
-            {
-                    if (matrix[depth, j % width] == (char)search)
-                    {
-                        for (int i = 0; i < depth; i++)
-                        {
-                            CTchars[CTindex] = matrix[i, j % width];
-                            CTindex++;
-                        }
-                        search++;
-                    }
+                keyMapping[key[j]] = j;
             }
 
-                return CTchars.ToString();
+            StringBuilder cipherText = new StringBuilder();
+            foreach (var column in key.OrderBy(k => k))
+            {
+                int j = keyMapping[column];
+                for (int i = 0; i < depth; i++)
+                {
+                    cipherText.Append(matrix[i, j]);
+                }
+            }
+
+            return cipherText.ToString();
         }
     }
 }
