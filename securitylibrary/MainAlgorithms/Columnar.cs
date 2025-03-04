@@ -15,7 +15,47 @@ namespace SecurityLibrary
 
         public string Decrypt(string cipherText, List<int> key)
         {
-            throw new NotImplementedException();
+            char[] cipherTextchars = cipherText.ToCharArray();
+            int width = key.Max();
+            int depth = cipherTextchars.Length / width;
+            char[,] matrix = new char[depth + 1, width];
+            char[,] matrix2 = new char[depth , width];
+            char[] PLchars = new char[cipherTextchars.Length];
+            int index = 0;
+            for (int j = 0; j < width; j++)
+            {
+                for (int i = 0; i < depth; i++)
+                {
+                    matrix[i, j] = cipherText[index];
+                    index++;
+                }
+            }
+            for (int j = 0; j < width; j++)
+            {
+                matrix[depth, j] = (char)(j+1);
+            }
+            int count = 1;
+            for (int j = 0; count <= width; j++)
+            {
+                if (matrix[depth, j% width] == (char)key.ElementAt(j % width))
+                {
+                    for (int i = 0; i < depth; i++)
+                    {
+                        matrix2[i, j % width] = matrix[i, j % width];
+                        count++;
+                    }
+                }
+            }
+            int indx = 0;
+            for (int i = 0; i < depth; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    PLchars[indx] = matrix2[i, j];
+                    indx++;
+                }
+            }
+                    return PLchars.ToString();
         }
 
         public string Encrypt(string plainText, List<int> key)
@@ -46,7 +86,7 @@ namespace SecurityLibrary
             }
             int search = 1;
             int CTindex = 0;
-            for (int j = 0; search < width; j++)
+            for (int j = 0; search <= width; j++)
             {
                     if (matrix[depth, j % width] == (char)search)
                     {
