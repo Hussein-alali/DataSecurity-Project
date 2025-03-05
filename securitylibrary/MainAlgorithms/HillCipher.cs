@@ -11,9 +11,42 @@ namespace SecurityLibrary
     /// </summary>
     public class HillCipher :  ICryptographicTechnique<List<int>, List<int>>
     {
+        public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
+        {
+      
+            
+            throw new NotImplementedException();
+        }
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            throw new NotImplementedException();
+            List<int> plaintextinves = invesm2(plainText);
+            List<int> Key = new List<int>(new int[4]);
+
+
+                Key[0] = (cipherText[0] * plaintextinves[0] + cipherText[1] * plaintextinves[2]) % 26;
+                Key[1] = (cipherText[0] * plaintextinves[1] + cipherText[1] * plaintextinves[3]) % 26;
+                Key[2] = (cipherText[2] * plaintextinves[0] + cipherText[3] * plaintextinves[2]) % 26;
+                Key[3] = (cipherText[2] * plaintextinves[1] + cipherText[3] * plaintextinves[3]) % 26;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Key[i] = (Key[i] + 26) % 26; 
+                }
+
+                return Key;
+           
+        }
+        public List<int> invesm2(List<int> key)
+        {
+            int detkey = detkeyF(key);
+
+            List<int> InverseKey = new List<int>(new int[key.Count]);
+            detkey = detInverse(detkey);
+            InverseKey[0] = ((key[3] * detkey) % 26);
+            InverseKey[1] = ((((key[1] * -1) % 26 + 26) * detkey) % 26);
+            InverseKey[2] = ((((key[2] * -1) % 26 + 26) * detkey) % 26);
+            InverseKey[3] = ((key[0] * detkey) % 26);
+            return InverseKey;
         }
         public int detkeyF(List<int> key)
         {
@@ -72,8 +105,8 @@ namespace SecurityLibrary
                 detkey = detkeyF(key);
                 detkey=detInverse(detkey);
                 InverseKey[0] = ((key[3] * detkey)%26);
-                  InverseKey[1] =(((key[1]*-1) * detkey) % 26);
-                  InverseKey[2] =(((key[2] * -1) * detkey) % 26);
+                  InverseKey[1] =((((key[1]*-1)% 26 +26) * detkey) % 26);
+                  InverseKey[2] =((((key[2] * -1) % 26 + 26) * detkey) % 26);
                   InverseKey[3] =((key[0] * detkey) % 26);
             }
             else if(Mat == 3)
@@ -127,12 +160,6 @@ namespace SecurityLibrary
 
 
 
-        public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
-        {
-      
-            
-            throw new NotImplementedException();
-        }
 
     }
 }
