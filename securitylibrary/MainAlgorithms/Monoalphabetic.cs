@@ -10,17 +10,55 @@ namespace SecurityLibrary
     {
         public string Analyse(string plainText, string cipherText)
         {
-            throw new NotImplementedException();
+            Dictionary<char, char> keyMapping = new Dictionary<char, char>();
+            for (int i = 0; i < plainText.Length; i++)
+            {
+                if (!keyMapping.ContainsKey(plainText[i]))
+                    keyMapping[plainText[i]] = cipherText[i];
+            }
+
+            char[] alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+            char[] key = new char[26];
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                key[i] = keyMapping.ContainsKey(alphabet[i]) ? keyMapping[alphabet[i]] : '?';
+            }
+
+            return new string(key);
         }
 
         public string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            Dictionary<char, char> decryptionKey = new Dictionary<char, char>();
+            for (int i = 0; i < 26; i++)
+            {
+                decryptionKey[key[i]] = (char)('a' + i);
+            }
+
+            StringBuilder plainText = new StringBuilder();
+            foreach (char c in cipherText)
+            {
+                plainText.Append(decryptionKey.ContainsKey(c) ? decryptionKey[c] : c);
+            }
+
+            return plainText.ToString();
         }
 
         public string Encrypt(string plainText, string key)
         {
-            throw new NotImplementedException();
+            Dictionary<char, char> encryptionKey = new Dictionary<char, char>();
+            for (int i = 0; i < 26; i++)
+            {
+                encryptionKey[(char)('a' + i)] = key[i];
+            }
+
+            StringBuilder cipherText = new StringBuilder();
+            foreach (char c in plainText)
+            {
+                cipherText.Append(encryptionKey.ContainsKey(c) ? encryptionKey[c] : c);
+            }
+
+            return cipherText.ToString();
         }
 
         /// <summary>
@@ -56,7 +94,34 @@ namespace SecurityLibrary
         /// <returns>Plain text</returns>
         public string AnalyseUsingCharFrequency(string cipher)
         {
-            throw new NotImplementedException();
+            string frequencyOrder = "ETAOINSHRDLCUMWFGYPBVKJXQZ".ToLower();
+            Dictionary<char, int> letterFrequency = new Dictionary<char, int>();
+
+            foreach (char c in cipher)
+            {
+                if (char.IsLetter(c))
+                {
+                    if (!letterFrequency.ContainsKey(c))
+                        letterFrequency[c] = 0;
+                    letterFrequency[c]++;
+                }
+            }
+
+            var sortedFrequencies = letterFrequency.OrderByDescending(x => x.Value).Select(x => x.Key).ToArray();
+            Dictionary<char, char> mapping = new Dictionary<char, char>();
+
+            for (int i = 0; i < sortedFrequencies.Length; i++)
+            {
+                mapping[sortedFrequencies[i]] = frequencyOrder[i];
+            }
+
+            StringBuilder plainText = new StringBuilder();
+            foreach (char c in cipher)
+            {
+                plainText.Append(mapping.ContainsKey(c) ? mapping[c] : c);
+            }
+
+            return plainText.ToString();
         }
     }
 }
