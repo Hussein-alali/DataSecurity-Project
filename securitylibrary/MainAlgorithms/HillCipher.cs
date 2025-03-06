@@ -13,96 +13,105 @@ namespace SecurityLibrary
     {
         public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
         {
-            List<int> plaintextinves = new List<int>(new int[9]);
+            
+            List<int> fornowitsP = new List<int>
+            {
+                plainText[0], plainText[3], plainText[6],
+                plainText[1], plainText[4], plainText[7],
+                plainText[2], plainText[5], plainText[8]
+            };
 
-            int detkey = (plainText[0] * plainText[4] * plainText[8] + plainText[1] * plainText[5] * plainText[6] + 
-                plainText[2] * plainText[3] * plainText[7]) - (plainText[1] * plainText[3] * plainText[8] +
-                plainText[0] * plainText[5] * plainText[7] + plainText[2] * plainText[4] * plainText[6]);
-            detkey %= 26;
-            if (detkey < 0)
-                detkey += 26;
-            int invDet;
+            List<int> fornowitsC = new List<int>
+            {
+                cipherText[0], cipherText[3], cipherText[6],
+                cipherText[1], cipherText[4], cipherText[7],
+                cipherText[2], cipherText[5], cipherText[8]
+            };
+
+            int det = (fornowitsP[0] * fornowitsP[4] * fornowitsP[8] + fornowitsP[1] * fornowitsP[5] * fornowitsP[6] + fornowitsP[2] * fornowitsP[3] * fornowitsP[7])
+                    - (fornowitsP[2] * fornowitsP[4] * fornowitsP[6] + fornowitsP[0] * fornowitsP[5] * fornowitsP[7] +fornowitsP[1] * fornowitsP[3] * fornowitsP[8]);
+            det %= 26;
+            if (det < 0)
+                det += 26;
+
+            int inversdetfornow = detInverse(det);
+
+            List<int> inversPfornow = new List<int>(new int[9]);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    int cofactorfornow = (adjF(fornowitsP, i, j) * inversdetfornow) % 26;
+                    if (cofactorfornow < 0)
+                        cofactorfornow += 26;
+                    inversPfornow[j * 3 + i] = cofactorfornow;
+                }
+            }
+
+            List<int> key = new List<int>(new int[9]);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int z  = 0; z < 3; z++)
+                {
+                    int sumofoneindex = 0;
+                    for (int k = 0; k < 3; k++)
+                    {
+                        sumofoneindex += fornowitsC[i * 3 + k] * inversPfornow[k * 3 + z];
+                    }
+                    key[i * 3 + z] = (sumofoneindex % 26 + 26) % 26;
+                }
+            }
+            return key;
+        }
+
+
+        public List<int> Analyse(List<int> plainText, List<int> cipherText)
+        {
+            if (plainText.Count != 4 || cipherText.Count != 4)
+                throw new ArgumentException("Both plaintext and ciphertext must contain exactly 4 integers for a 2x2 key.");
+
+            List<int> fornowitsP = new List<int>
+            {
+               plainText[0],
+               plainText[2],
+               plainText[1],
+               plainText[3]
+            };
+            List<int> fornowitsC = new List<int>
+            {
+              cipherText[0],
+              cipherText[2],
+              cipherText[1],
+              cipherText[3]
+            };
+
+            List<int> plaintextinves;
             try
             {
-                invDet = detInverse(detkey);
+                plaintextinves = invesm2(fornowitsP); 
             }
             catch (Exception)
             {
                 throw new InvalidAnlysisException();
             }
-            detkey = detInverse(detkey);
 
-            for (int i = 0; i < 3; i++)
-            {
-                int value;
-                for (int j = 0; j < 3; j++)
-                {
-                    value = (adjF(plainText, i, j) * detkey) % 26;
-                    if (value < 0)
-                        value += 26;
-                    plaintextinves[j * 3 + i] = value;
-                }
-            }
-            List<int> Key = new List<int>(new int[9]);
-
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    int sum = 0;
-                    for (int k = 0; k < 3; k++)
-                    {
-                        sum += cipherText[i * 3 + k] * plaintextinves[k * 3 + j];
-                    }
-                    Key[i * 3 + j] = (sum % 26 + 26) % 26;
-                }
-            }
-            return Key;
-        
-
-        }
-        public List<int> Analyse(List<int> plainText, List<int> cipherText)
-        {
-            List<int> fornowitsP= new List<int>
-            {
-                 plainText[0],
-                 plainText[2],
-                 plainText[1],
-                 plainText[3]
-            };
-            List<int> fornowitsC = new List<int>
-            {
-                cipherText[0],
-                cipherText[2],
-                cipherText[1],
-                cipherText[3]
-            };
-            List<int> plaintextinves;
-            try
-            {
-                plaintextinves = invesm2(fornowitsP);
-            }
-            catch (Exception) 
-            { 
-                throw new InvalidAnlysisException();
-            }
-            
             List<int> Key = new List<int>(new int[4]);
 
+            
+            Key[0] = (fornowitsC[0] * plaintextinves[0] + fornowitsC[1] * plaintextinves[2]) % 26;
+            Key[1] = (fornowitsC[0] * plaintextinves[1] + fornowitsC[1] * plaintextinves[3]) % 26;
+            Key[2] = (fornowitsC[2] * plaintextinves[0] + fornowitsC[3] * plaintextinves[2]) % 26;
+            Key[3] = (fornowitsC[2] * plaintextinves[1] + fornowitsC[3] * plaintextinves[3]) % 26;
 
-                Key[0] = (fornowitsC[0] * plaintextinves[0] + fornowitsC[1] * plaintextinves[2]) % 26;
-                Key[1] = (fornowitsC[0] * plaintextinves[1] + fornowitsC[1] * plaintextinves[3]) % 26;
-                Key[2] = (fornowitsC[2] * plaintextinves[0] + fornowitsC[3] * plaintextinves[2]) % 26;
-                Key[3] = (fornowitsC[2] * plaintextinves[1] + fornowitsC[3] * plaintextinves[3]) % 26;
+            for (int i = 0; i < 4; i++)
+            {
+                Key[i] = (Key[i] + 26) % 26;
+            }
 
-                for (int i = 0; i < 4; i++)
-                {
-                    Key[i] = (Key[i] + 26) % 26; 
-                }
-
-                return Key;
-           
+            return Key;
         }
+
+
         public List<int> invesm2(List<int> key)
         {
             int detkey = detkeyF(key);
