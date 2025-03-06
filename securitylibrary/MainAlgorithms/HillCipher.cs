@@ -21,6 +21,15 @@ namespace SecurityLibrary
             detkey %= 26;
             if (detkey < 0)
                 detkey += 26;
+            int invDet;
+            try
+            {
+                invDet = detInverse(detkey);
+            }
+            catch (Exception)
+            {
+                throw new InvalidAnlysisException();
+            }
             detkey = detInverse(detkey);
 
             for (int i = 0; i < 3; i++)
@@ -68,7 +77,16 @@ namespace SecurityLibrary
                 cipherText[1],
                 cipherText[3]
             };
-            List<int> plaintextinves = invesm2(fornowitsP);
+            List<int> plaintextinves;
+            try
+            {
+                plaintextinves = invesm2(fornowitsP);
+            }
+            catch (Exception) 
+            { 
+                throw new InvalidAnlysisException();
+            }
+            
             List<int> Key = new List<int>(new int[4]);
 
 
@@ -88,6 +106,7 @@ namespace SecurityLibrary
         public List<int> invesm2(List<int> key)
         {
             int detkey = detkeyF(key);
+
 
             List<int> InverseKey = new List<int>(new int[key.Count]);
             detkey = detInverse(detkey);
@@ -140,7 +159,7 @@ namespace SecurityLibrary
                 if ((det * x) % 26 == 1)
                     return x;
             }
-            throw new Exception("No det inverse exists.");
+            throw new InvalidAnlysisException();
         }
         public List<int> Decrypt(List<int> cipherText, List<int> key)
         {
