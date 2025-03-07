@@ -9,11 +9,11 @@ namespace SecurityLibrary
     /// <summary>
     /// The List<int> is row based. Which means that the key is given in row based manner.
     /// </summary>
-    public class HillCipher :  ICryptographicTechnique<List<int>, List<int>>
+    public class HillCipher : ICryptographicTechnique<List<int>, List<int>>
     {
         public List<int> Analyse3By3Key(List<int> plainText, List<int> cipherText)
         {
-            
+
             List<int> fornowitsP = new List<int>
             {
                 plainText[0], plainText[3], plainText[6],
@@ -29,7 +29,7 @@ namespace SecurityLibrary
             };
 
             int det = (fornowitsP[0] * fornowitsP[4] * fornowitsP[8] + fornowitsP[1] * fornowitsP[5] * fornowitsP[6] + fornowitsP[2] * fornowitsP[3] * fornowitsP[7])
-                    - (fornowitsP[2] * fornowitsP[4] * fornowitsP[6] + fornowitsP[0] * fornowitsP[5] * fornowitsP[7] +fornowitsP[1] * fornowitsP[3] * fornowitsP[8]);
+                    - (fornowitsP[2] * fornowitsP[4] * fornowitsP[6] + fornowitsP[0] * fornowitsP[5] * fornowitsP[7] + fornowitsP[1] * fornowitsP[3] * fornowitsP[8]);
             det %= 26;
             if (det < 0)
                 det += 26;
@@ -51,7 +51,7 @@ namespace SecurityLibrary
             List<int> key = new List<int>(new int[9]);
             for (int i = 0; i < 3; i++)
             {
-                for (int z  = 0; z < 3; z++)
+                for (int z = 0; z < 3; z++)
                 {
                     int sumofoneindex = 0;
                     for (int k = 0; k < 3; k++)
@@ -88,7 +88,7 @@ namespace SecurityLibrary
             List<int> plaintextinves;
             try
             {
-                plaintextinves = invesm2(fornowitsP); 
+                plaintextinves = invesm2(fornowitsP);
             }
             catch (Exception)
             {
@@ -97,7 +97,7 @@ namespace SecurityLibrary
 
             List<int> Key = new List<int>(new int[4]);
 
-            
+
             Key[0] = (fornowitsC[0] * plaintextinves[0] + fornowitsC[1] * plaintextinves[2]) % 26;
             Key[1] = (fornowitsC[0] * plaintextinves[1] + fornowitsC[1] * plaintextinves[3]) % 26;
             Key[2] = (fornowitsC[2] * plaintextinves[0] + fornowitsC[3] * plaintextinves[2]) % 26;
@@ -127,13 +127,13 @@ namespace SecurityLibrary
         }
         public int detkeyF(List<int> key)
         {
-            int detkey =( key[0] * key[3] - key[1] * key[2])%26;
+            int detkey = (key[0] * key[3] - key[1] * key[2]) % 26;
             if (detkey < 0)
                 detkey += 26;
             return detkey;
             //throw new NotImplementedException();
         }
-        public int adjF(List<int> key,int i ,int j)
+        public int adjF(List<int> key, int i, int j)
         {
             List<int> listfornow = new List<int>(4);
 
@@ -143,13 +143,13 @@ namespace SecurityLibrary
                 {
                     if (k != i && i1 != j)
                     {
-                        listfornow.Add(key[k*3 + i1]);
+                        listfornow.Add(key[k * 3 + i1]);
                     }
                 }
             }
 
             int finalnum = detkeyF(listfornow);
-            if ((i + j) % 2!=0)
+            if ((i + j) % 2 != 0)
             {
                 finalnum *= -1;
             }
@@ -159,7 +159,7 @@ namespace SecurityLibrary
             return finalnum;
             //throw new NotImplementedException();
         }
-        public int detInverse(int det )
+        public int detInverse(int det)
         {
             det %= 26;
             if (det < 0) det += 26;
@@ -177,24 +177,24 @@ namespace SecurityLibrary
             int detkey;
             List<int> InverseKey = new List<int>(new int[key.Count]);
 
-            if (Mat ==2)
+            if (Mat == 2)
             {
                 detkey = detkeyF(key);
-                detkey=detInverse(detkey);
-                InverseKey[0] = ((key[3] * detkey)%26);
-                  InverseKey[1] =((((key[1]*-1)% 26 +26) * detkey) % 26);
-                  InverseKey[2] =((((key[2] * -1) % 26 + 26) * detkey) % 26);
-                  InverseKey[3] =((key[0] * detkey) % 26);
+                detkey = detInverse(detkey);
+                InverseKey[0] = ((key[3] * detkey) % 26);
+                InverseKey[1] = ((((key[1] * -1) % 26 + 26) * detkey) % 26);
+                InverseKey[2] = ((((key[2] * -1) % 26 + 26) * detkey) % 26);
+                InverseKey[3] = ((key[0] * detkey) % 26);
             }
-            else if(Mat == 3)
+            else if (Mat == 3)
             {
                 detkey = (key[0] * key[4] * key[8] + key[1] * key[5] * key[6] +
-                    key[2] * key[3] * key[7]) - (key[1] * key[3] * key[8] + 
+                    key[2] * key[3] * key[7]) - (key[1] * key[3] * key[8] +
                     key[0] * key[5] * key[7] + key[2] * key[4] * key[6]);
                 detkey %= 26;
                 if (detkey < 0)
                     detkey += 26;
-                detkey= detInverse(detkey);
+                detkey = detInverse(detkey);
 
                 for (int i = 0; i < Mat; i++)
                 {
@@ -204,7 +204,7 @@ namespace SecurityLibrary
                         value = (adjF(key, i, j) * detkey) % 26;
                         if (value < 0)
                             value += 26;
-                        InverseKey[j *Mat + i]=value;
+                        InverseKey[j * Mat + i] = value;
                     }
                 }
             }
@@ -222,14 +222,14 @@ namespace SecurityLibrary
 
             List<int> cryptText = new List<int>();
 
-            for (int i = 0; i < plainText.Count; i+=Mat)
+            for (int i = 0; i < plainText.Count; i += Mat)
             {
                 for (int z = 0; z < Mat; z++)
                 {
                     int sumofmult = 0;
                     for (int j = 0; j < Mat; j++)
                     {
-                        sumofmult += key[z * Mat + j] * plainText[i+j];
+                        sumofmult += key[z * Mat + j] * plainText[i + j];
                     }
                     cryptText.Add(sumofmult % 26);
                 }
