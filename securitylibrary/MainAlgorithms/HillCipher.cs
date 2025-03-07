@@ -67,46 +67,67 @@ namespace SecurityLibrary
 
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            
-            List<int> fornowitsP = new List<int>
-            {
-               plainText[0],
-               plainText[2],
-               plainText[1],
-               plainText[3]
-            };
-            List<int> fornowitsC = new List<int>
-            {
-              cipherText[0],
-              cipherText[2],
-              cipherText[1],
-              cipherText[3]
-            };
+            List<int> InverseKey = new List<int>(new int[4]);
+            List<int> Key = new List<int>();
+            int Pinvers = 0;
+            bool validKeyFound = false;
+            List<int> finalPlain = new List<int> { };
 
-            List<int> plaintextinves;
-            try
+            for (int i = 0; i < plainText.Count-1; i++)
             {
-                plaintextinves = invesm2(fornowitsP);
+                for (int j = i+2; j < plainText.Count-1; j++)
+                {
+                    
+                    finalPlain = new List<int>
+             {
+                 plainText[i],
+                 plainText[i+1],
+                 plainText[j],
+                 plainText[j+1]
+             };
+                    int detfornow = detkeyF(finalPlain);
+                    detfornow %= 26;
+                    if (detfornow < 0) detfornow += 26;
+                    for (int x = 1; x < 26; x++)
+                    {
+                        if ((detfornow * x) % 26 == 1)
+                        {
+                            Pinvers = x;
+                            validKeyFound = true;
+                            break;
+                        }
+
+                    }
+                    
+                }
+
             }
-            catch (Exception)
+           
+            InverseKey[0] = finalPlain[3] * Pinvers % 26;
+            InverseKey[1] = ((((finalPlain[1] * -1) % 26 + 26) * Pinvers) % 26);
+            InverseKey[2] = ((((finalPlain[2] * -1) % 26 + 26) * Pinvers) % 26);
+            InverseKey[3] = ((finalPlain[0] * Pinvers) % 26);
+            for (int i = 0; i < cipherText.Count; i += 2)
             {
-                throw new InvalidAnlysisException();
+                for (int z = 0; z < 2; z++)
+                {
+                    int sumofmult = 0;
+                    for (int j = 0; j < 2; j++)
+                    {
+                        sumofmult += InverseKey[z * 2 + j] * cipherText[i + j];
+                    }
+                    Key.Add(sumofmult % 26);
+                }
             }
-
-            List<int> Key = new List<int>(new int[4]);
-
-
-            Key[0] = (fornowitsC[0] * plaintextinves[0] + fornowitsC[1] * plaintextinves[2]) % 26;
-            Key[1] = (fornowitsC[0] * plaintextinves[1] + fornowitsC[1] * plaintextinves[3]) % 26;
-            Key[2] = (fornowitsC[2] * plaintextinves[0] + fornowitsC[3] * plaintextinves[2]) % 26;
-            Key[3] = (fornowitsC[2] * plaintextinves[1] + fornowitsC[3] * plaintextinves[3]) % 26;
-
-            for (int i = 0; i < 4; i++)
+            if (Decrypt(cipherText, Key) == plainText)
             {
-                Key[i] = (Key[i] + 26) % 26;
-            }
-
             return Key;
+            }
+            else
+            {
+            throw new NotImplementedException();
+            }
+
         }
 
 
