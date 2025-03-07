@@ -67,9 +67,7 @@ namespace SecurityLibrary
 
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            if (plainText.Count != 4 || cipherText.Count != 4)
-                throw new ArgumentException("Both plaintext and ciphertext must contain exactly 4 integers for a 2x2 key.");
-
+            
             List<int> fornowitsP = new List<int>
             {
                plainText[0],
