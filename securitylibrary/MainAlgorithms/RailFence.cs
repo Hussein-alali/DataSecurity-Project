@@ -28,27 +28,35 @@ namespace SecurityLibrary
 
         public string Decrypt(string cipherText, int key)
         {
+           // cipherText = cipherText.TrimEnd('x');
+
+            string plainText = "";
+
             if (key == 1)
                 return cipherText;
 
-            char[,] ourword = new char[key, cipherText.Length];
-
+            char[,] word = new char[key, cipherText.Length];
             int r = 0, c = 0;
-            bool last = false;
+            bool lastrow = false;
 
             for (int i = 0; i < cipherText.Length; i++)
             {
-                ourword[r, c++] = '@';
-
+                if (r == 0)
+                    lastrow = false;
                 if (r == key - 1)
-                    last = true;
-                else if (r == 0)
-                    last = false;
+                    lastrow = true;
 
-                if (last)
+                word[r, c] = 'm';
+                c++;
+
+                if (lastrow)
+                {
                     r--;
+                }
                 else
+                {
                     r++;
+                }
             }
 
             int index = 0;
@@ -56,53 +64,69 @@ namespace SecurityLibrary
             {
                 for (int j = 0; j < cipherText.Length; j++)
                 {
-                    if (ourword[i, j] == '@' && index < cipherText.Length)
-                        ourword[i, j] = cipherText[index++];
-                }
-            }
-
-            string res = "";
-            r = 0; c = 0; last = false;
-
-            for (int i = 0; i < cipherText.Length; i++)
-            {
-                res += ourword[r, c++];
-
-                if (r == key - 1)
-                    last = true;
-                else if (r == 0)
-                    last = false;
-
-                if (last)
-                    r--;
-                else
-                    r++;
-            }
-
-            return res;
-        }
-
-
-        public string Encrypt(string plaintext, int key)
-        {
-            if (key == 1)
-                return plaintext;
-
-            char[,] word = new char[key, plaintext.Length];
-            bool down = true;
-
-            for (int r = 0; r < key; r++)
-            {
-                for (int c = 0; c < plaintext.Length; c++)
-                {
-                    if (c % key == r)
+                    if ( index < cipherText.Length && word[i, j] == 'm')
                     {
-                        word[r, c / key] = plaintext[c];
+                        word[i, j] = cipherText[index];
+                        index++;
                     }
                 }
             }
 
+            r = 0;
+            c = 0;
+            lastrow = false;
 
+            for (int j = 0; j < cipherText.Length; j++)
+            {
+                if (r == 0)
+                {
+                    lastrow = false;
+                }
+                if (r == key - 1)
+                {
+                    lastrow = true;
+                }
+
+                plainText += word[r, c];
+                c++;
+
+                r += lastrow ? -1 : 1;
+            }
+            return plainText;
+        }
+
+        public string Encrypt(string plaintext, int key)
+        {
+            //while (plaintext.Length % key != 0)
+            //{
+            //    plaintext += 'x';
+            //}
+           plaintext = plaintext.TrimEnd('x');
+
+            if (key == 1)
+                return plaintext;
+            char[,] word = new char[key, plaintext.Length];
+            int r = 0;
+            int c = 0;
+            bool bottom = false;
+            for (int i = 0; i < plaintext.Length; i++)
+            {
+                if (r == 0)
+                    bottom = false;
+                else if (r == key - 1)
+                    bottom = true;
+
+                word[r, c] = plaintext[i];
+                c++;
+                if (bottom == false)
+                {
+                    r += 1;
+                }
+                else
+                {
+                    r -= 1;
+                }
+            }
             string final = "";
             for (int i = 0; i < key; i++)
             {
@@ -112,8 +136,10 @@ namespace SecurityLibrary
                         final += word[i, j];
                 }
             }
-            return final.ToUpper();
+            return final;
         }
-
     }
 }
+
+
+
