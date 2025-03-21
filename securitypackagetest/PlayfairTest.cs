@@ -103,7 +103,7 @@ namespace SecurityPackageTest
         }
 
         [TestMethod]
-        public void PlayfairTestBonusAnalysis()
+       public void PlayfairTestBonusAnalysis()
         {
             PlayFair algorithm = new PlayFair();
             string plain = algorithm.Analyse(largeCipher);

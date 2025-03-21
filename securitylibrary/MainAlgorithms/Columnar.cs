@@ -10,6 +10,108 @@ namespace SecurityLibrary
     {
         public List<int> Analyse(string plainText, string cipherText)
         {
+            //    throw new NotImplementedException();
+
+
+            //      CT = "CTIPSCOEEMRNUCE"
+            //      PT = "Computer Science" = 15
+            //      key = 1 3 4 2 5 ??
+
+
+            string PT = plainText;
+            string CT = cipherText;
+
+            CT = CT.ToLower();
+
+            double PT_Length = PT.Length;
+            //double CT_Length = CT.Length;
+
+            //string CT = cipherText.ToUpper();
+            //double CT_Length = CT.Length;    //  CT_Length = 15
+
+            //    string PT = plainText.ToUpper();
+            //    double PT_Length = PT.Length;
+
+            //    /////////////////////////////////////////////////////////////////////
+            //    /
+
+
+
+            //      CT = "CTIPSCOEEMRNUCE"
+            //      PT = "Computer Science" = 15
+            //      key = 1 3 4 2 5 ??
+
+            int col = 0;
+
+            for (int i = 1; i < 8; i++)
+            {
+                if (PT_Length % i == 0)
+                {
+                    col = i; // col = 5
+                }
+            }
+
+            int row = (int)PT_Length / col;  // 15 / 5 = 3 // row = 3
+
+            char[,] PT_Matrix = new char[row, col];
+            char[,] CT_Matrix = new char[row, col];
+
+            List<int> key = new List<int>(col);
+            int counter = 0;
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    if (counter < PT_Length)
+                    {
+                        PT_Matrix[i, j] = PT[counter];
+                        counter++;
+                    }
+                }
+            }
+
+            counter = 0;
+            for (int i = 0; i < col; i++)
+            {
+                for (int j = 0; j < row; j++)
+                {
+                    if (counter < PT_Length)
+                    {
+                        CT_Matrix[j, i] = CT[counter];
+                        counter++;
+                    }
+                }
+            }
+
+            int check = 0;
+            for (int i = 0; i < col; i++)
+            {
+                for (int s = 0; s < col; s++)
+                {
+                    for (int j = 0; j < row; j++)
+                    {
+                        if (PT_Matrix[j, i] == CT_Matrix[j, s])
+                        {
+                            check++;
+                        }
+                        if (check == row)
+                            key.Add(s + 1);
+                    }
+                    check = 0;
+                }
+            }
+
+            if (key.Count() == 0)
+            {
+                for (int i = 0; i < col + 2; i++)
+                {
+                    key.Add(i);
+                }
+            }
+            return key;
+        
+
+
             throw new NotImplementedException();
         }
 

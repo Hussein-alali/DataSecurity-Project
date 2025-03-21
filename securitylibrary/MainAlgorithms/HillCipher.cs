@@ -65,73 +65,107 @@ namespace SecurityLibrary
         }
 
 
+        /*  public List<int> Analyse(List<int> plainText, List<int> cipherText)
+          {
+              List<int> InverseKey = new List<int>(new int[4]);
+              List<int> Key = new List<int>();
+              int Pinvers = 0;
+              bool validKeyFound = false;
+              List<int> finalPlain = new List<int> { };
+
+              for (int i = 0; i < plainText.Count-1; i++)
+              {
+                  for (int j = i+2; j < plainText.Count-1; j++)
+                  {
+
+                      finalPlain = new List<int>
+               {
+                   plainText[i],
+                   plainText[i+1],
+                   plainText[j],
+                   plainText[j+1]
+               };
+                      int detfornow = detkeyF(finalPlain);
+                      detfornow %= 26;
+                      if (detfornow < 0) detfornow += 26;
+                      for (int x = 1; x < 26; x++)
+                      {
+                          if ((detfornow * x) % 26 == 1)
+                          {
+                              Pinvers = x;
+                              validKeyFound = true;
+                              break;
+                          }
+
+                      }
+
+                  }
+
+              }
+
+              InverseKey[0] = finalPlain[3] * Pinvers % 26;
+              InverseKey[1] = ((((finalPlain[1] * -1) % 26 + 26) * Pinvers) % 26);
+              InverseKey[2] = ((((finalPlain[2] * -1) % 26 + 26) * Pinvers) % 26);
+              InverseKey[3] = ((finalPlain[0] * Pinvers) % 26);
+              for (int i = 0; i < cipherText.Count; i += 2)
+              {
+                  for (int z = 0; z < 2; z++)
+                  {
+                      int sumofmult = 0;
+                      for (int j = 0; j < 2; j++)
+                      {
+                          sumofmult += InverseKey[z * 2 + j] * cipherText[i + j];
+                      }
+                      Key.Add(sumofmult % 26);
+                  }
+              }
+              if (Decrypt(cipherText, Key) == plainText)
+              {
+              return Key;
+              }
+              else
+              {
+              throw new NotImplementedException();
+              }
+
+          }*/
+        //new update 
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
-            List<int> InverseKey = new List<int>(new int[4]);
-            List<int> Key = new List<int>();
-            int Pinvers = 0;
-            bool validKeyFound = false;
-            List<int> finalPlain = new List<int> { };
-
-            for (int i = 0; i < plainText.Count-1; i++)
+            List<int> final_key = new List<int>();
+            int index;
+            int count;
+            for (index = 0, count = 2; index < 2; index++, count += 2)
             {
-                for (int j = i+2; j < plainText.Count-1; j++)
+                for (int i = 0; i < 26; i++)
                 {
-                    
-                    finalPlain = new List<int>
-             {
-                 plainText[i],
-                 plainText[i+1],
-                 plainText[j],
-                 plainText[j+1]
-             };
-                    int detfornow = detkeyF(finalPlain);
-                    detfornow %= 26;
-                    if (detfornow < 0) detfornow += 26;
-                    for (int x = 1; x < 26; x++)
+                    for (int j = 0; j < 26; j++)
                     {
-                        if ((detfornow * x) % 26 == 1)
+                        if (
+                            ((i * plainText[0]) + (j * plainText[1])) % 26 == cipherText[index] &&
+                            ((i * plainText[2]) + (j * plainText[3])) % 26 == cipherText[index + 2])
                         {
-                            Pinvers = x;
-                            validKeyFound = true;
+                            final_key.Add(i);
+                            final_key.Add(j);
                             break;
                         }
-
                     }
-                    
-                }
-
-            }
-           
-            InverseKey[0] = finalPlain[3] * Pinvers % 26;
-            InverseKey[1] = ((((finalPlain[1] * -1) % 26 + 26) * Pinvers) % 26);
-            InverseKey[2] = ((((finalPlain[2] * -1) % 26 + 26) * Pinvers) % 26);
-            InverseKey[3] = ((finalPlain[0] * Pinvers) % 26);
-            for (int i = 0; i < cipherText.Count; i += 2)
-            {
-                for (int z = 0; z < 2; z++)
-                {
-                    int sumofmult = 0;
-                    for (int j = 0; j < 2; j++)
-                    {
-                        sumofmult += InverseKey[z * 2 + j] * cipherText[i + j];
-                    }
-                    Key.Add(sumofmult % 26);
+                    if (final_key.Count == count)
+                    { break; }
                 }
             }
-            if (Decrypt(cipherText, Key) == plainText)
-            {
-            return Key;
-            }
+            if (final_key.Count < 4)
+            { throw new InvalidAnlysisException(); }
             else
             {
-            throw new NotImplementedException();
-            }
+                return final_key;
 
+            }
         }
 
 
-        public List<int> invesm2(List<int> key)
+
+            public List<int> invesm2(List<int> key)
         {
             int detkey = detkeyF(key);
 

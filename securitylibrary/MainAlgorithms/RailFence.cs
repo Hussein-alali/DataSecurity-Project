@@ -26,7 +26,7 @@ namespace SecurityLibrary
             return -1;
         }
 
-        public string Decrypt(string cipherText, int key)
+      /*  public string Decrypt(string cipherText, int key)
         {
             if (key == 1)
                 return cipherText;
@@ -80,7 +80,7 @@ namespace SecurityLibrary
             }
 
             return res;
-        }
+        }*/
 
 
         public string Encrypt(string plaintext, int key)
@@ -114,6 +114,85 @@ namespace SecurityLibrary
             }
             return final.ToUpper();
         }
+
+
+        public string Decrypt(string cipherText, int key)
+        {
+
+            cipherText = cipherText.Replace(" ", "");
+            int countl = 0;
+            int c = 0;
+
+            int length = cipherText.Length;
+            int MATRIX_COLUMNS = length / key;
+            int MATRIX_ROWS = key;
+            char last_char = cipherText[cipherText.Length - 1];
+
+            if (length % key == 0)
+            {
+                MATRIX_COLUMNS = (length / key);
+            }
+            else
+            {
+                MATRIX_COLUMNS = (length / key) + 1;
+            }
+            int v = (MATRIX_ROWS * MATRIX_COLUMNS) - length;
+            char[] cipher = new char[MATRIX_ROWS * MATRIX_COLUMNS];
+
+            char[,] matrix = new char[MATRIX_ROWS, MATRIX_COLUMNS];
+
+
+
+            for (int i = 0; i < v; i++)
+            {
+                cipherText += " ";
+
+            }
+
+
+            for (int i = 0; i < MATRIX_ROWS; i++)
+            {
+
+                for (int j = 0; j < MATRIX_COLUMNS; j++)
+                {
+
+                    matrix[i, j] = cipherText[c];
+                    c++;
+
+                    Console.WriteLine(matrix[i, j]);
+
+                }
+                Console.WriteLine("\n\n");
+
+            }
+            for (int i = 0; i < MATRIX_COLUMNS; i++)
+            {
+
+                for (int j = 0; j < MATRIX_ROWS; j++)
+                {
+
+                    cipher[countl] = matrix[j, i];
+                    countl++;
+                    //Console.WriteLine(cipher[j]);
+
+                }
+
+
+            }
+            String message = string.Join("", cipher);
+            message = message.Replace(" ", "");
+            message = message.ToLower();
+            Console.WriteLine(message);
+
+            return message;
+
+        }
+
+
+
+
+        string str;
+
 
     }
 }

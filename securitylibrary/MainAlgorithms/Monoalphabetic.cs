@@ -90,32 +90,69 @@ namespace SecurityLibrary
             return cipherText.ToString();
         }
 
-
         public string AnalyseUsingCharFrequency(string cipher)
         {
-            string Order = "ETAOINSHRDLCUMWFGYPBVKJXQZ".ToLower();
-            Dictionary<char, int> letterFrequency = new Dictionary<char, int>();
-            foreach (char c in cipher)
+            string alphabetFreq = "ETAOINSRHLDCUMFPGWYBVKXJQZ".ToLower();
+            SortedDictionary<char, char> keyTable = new SortedDictionary<char, char>();
+            cipher = cipher.ToLower();
+            int CTLength = cipher.Length;
+            string key = "";
+            Dictionary<char, int> d1 = new Dictionary<char, int>();
+            for (int i = 97; i < 123; i++)
             {
-                if (char.IsLetter(c))
+                int c = 0;
+
+                for (int j = 0; j < cipher.Length; j++)
                 {
-                    if (!letterFrequency.ContainsKey(c))
-                        letterFrequency[c] = 0;
-                    letterFrequency[c]++;
+                    if (cipher[j] == (char)i)
+                    {
+                        c++;
+                    }
                 }
+                d1.Add((char)i, c);
             }
-            var sortedFrequencies = letterFrequency.OrderByDescending(x => x.Value).Select(x => x.Key).ToArray();
-            Dictionary<char, char> mapping = new Dictionary<char, char>();
-            for (int i = 0; i < sortedFrequencies.Length; i++)
+
+            d1 = d1.OrderBy(x => x.Value).Reverse().ToDictionary(x => x.Key, x => x.Value);
+            int counter = 0;
+            foreach (var item in d1)
             {
-                mapping[sortedFrequencies[i]] = Order[i];
+                keyTable.Add(item.Key, alphabetFreq[counter]);
+                counter++;
             }
-            StringBuilder plainText = new StringBuilder();
-            foreach (char c in cipher)
+            for (int i = 0; i < CTLength; i++)
             {
-                plainText.Append(mapping.ContainsKey(c) ? mapping[c] : c);
+                key += keyTable[cipher[i]];
             }
-            return plainText.ToString();
+
+            return key;
         }
+
+
+        /*  public string AnalyseUsingCharFrequency(string cipher)
+          {
+              string Order = "ETAOINSHRDLCUMWFGYPBVKJXQZ".ToLower();
+              Dictionary<char, int> letterFrequency = new Dictionary<char, int>();
+              foreach (char c in cipher)
+              {
+                  if (char.IsLetter(c))
+                  {
+                      if (!letterFrequency.ContainsKey(c))
+                          letterFrequency[c] = 0;
+                      letterFrequency[c]++;
+                  }
+              }
+              var sortedFrequencies = letterFrequency.OrderByDescending(x => x.Value).Select(x => x.Key).ToArray();
+              Dictionary<char, char> mapping = new Dictionary<char, char>();
+              for (int i = 0; i < sortedFrequencies.Length; i++)
+              {
+                  mapping[sortedFrequencies[i]] = Order[i];
+              }
+              StringBuilder plainText = new StringBuilder();
+              foreach (char c in cipher)
+              {
+                  plainText.Append(mapping.ContainsKey(c) ? mapping[c] : c);
+              }
+              return plainText.ToString();
+          }*/
     }
 }
