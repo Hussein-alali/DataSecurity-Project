@@ -195,11 +195,8 @@ namespace SecurityLibrary.DES
             }
             else if (shifts == 2)
             {
-                C = C.Substring(1) + C[0];
-                D = D.Substring(1) + D[0]; 
-
-                C = C.Substring(1) + C[0];
-                D = D.Substring(1) + D[0];
+                C = C.Substring(2) + C.Substring(0, 2);
+                D = D.Substring(2) + D.Substring(0, 2);
             }
             result = C + D;
             return result;
