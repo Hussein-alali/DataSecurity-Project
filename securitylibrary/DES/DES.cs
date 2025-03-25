@@ -15,29 +15,18 @@ namespace SecurityLibrary.DES
 
         public override string Decrypt(string cipherText, string key)
         {
-            // Handle hexadecimal input
+            
             bool isHex = cipherText.StartsWith("0x");
             string cipherTextBits = isHex ? HexToBinary(cipherText.Substring(2)) : StringToBinary(cipherText);
             string keyBits = key.StartsWith("0x") ? HexToBinary(key.Substring(2)) : StringToBinary(key);
-
-            // Ensure inputs are 64 bits
             cipherTextBits = cipherTextBits.PadLeft(64, '0').Substring(0, 64);
             keyBits = keyBits.PadLeft(64, '0').Substring(0, 64);
-
-            // Initial Permutation
             string permutedCipher = Permute(cipherTextBits, IP);
-
-            // Generate all 16 round keys
             List<string> roundKeys = GenerateRoundKeys(keyBits);
-
-            // Reverse the round keys for decryption
             roundKeys.Reverse();
-
-            // Split into left and right halves
             string left = permutedCipher.Substring(0, 32);
             string right = permutedCipher.Substring(32);
 
-            // 16 rounds of Feistel network
             for (int round = 0; round < 16; round++)
             {
                 string tempLeft = left;
@@ -45,36 +34,29 @@ namespace SecurityLibrary.DES
                 right = XOR(tempLeft, FeistelFunction(right, roundKeys[round]));
             }
 
-            // Combine the halves (swap left and right one last time)
             string combined = right + left;
-
-            // Apply inverse initial permutation
             string plaintextBits = Permute(combined, IPinvers);
-
-            // Convert back to appropriate format
             if (isHex)
             {
                 return "0x" + BinaryToHex(plaintextBits);
             }
             return BinaryToString(plaintextBits);
         }
-        // Helper methods
+
         private string Permute(string input, int[] table)
         {
             StringBuilder result = new StringBuilder(table.Length);
             foreach (int index in table)
             {
-                result.Append(input[index - 1]); // -1 because tables are 1-based
+                result.Append(input[index - 1]); 
             }
             return result.ToString();
         }
 
         private List<string> GenerateRoundKeys(string key)
         {
-            // Apply PC1 permutation (64 bits to 56 bits)
+            
             string permutedKey = Permute(key, PC1);
-
-            // Split into C and D (28 bits each)
             string C = permutedKey.Substring(0, 28);
             string D = permutedKey.Substring(28);
 
@@ -82,12 +64,9 @@ namespace SecurityLibrary.DES
 
             for (int round = 0; round < 16; round++)
             {
-                // Left shift both halves
                 int shift = SL[round];
                 C = C.Substring(shift) + C.Substring(0, shift);
                 D = D.Substring(shift) + D.Substring(0, shift);
-
-                // Combine and apply PC2 to get 48-bit round key
                 roundKeys.Add(Permute(C + D, PC2));
             }
 
@@ -96,13 +75,8 @@ namespace SecurityLibrary.DES
 
         private string FeistelFunction(string right, string roundKey)
         {
-            // Expansion from 32 to 48 bits
             string expanded = Permute(right, E_BitSelectionTable);
-
-            // XOR with round key
             string xored = XOR(expanded, roundKey);
-
-            // S-box substitution
             StringBuilder sboxResult = new StringBuilder();
             for (int i = 0; i < 8; i++)
             {
@@ -113,8 +87,6 @@ namespace SecurityLibrary.DES
                 int sboxValue = sBoxes["S" + (i + 1)][row * 16 + col];
                 sboxResult.Append(Convert.ToString(sboxValue, 2).PadLeft(4, '0'));
             }
-
-            // Permutation with P-box
             return Permute(sboxResult.ToString(), p2);
         }
 
