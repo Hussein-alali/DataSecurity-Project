@@ -13,6 +13,10 @@ namespace SecurityLibrary.DES
     public class DES : CryptographicTechnique
     {
 
+        public override string Decrypt(string cipherText, string key)
+        {
+            throw new NotImplementedException();
+        }
         int[] IP = {
                 58, 50, 42, 34, 26, 18, 10, 2,
                 60, 52, 44, 36, 28, 20, 12, 4,
@@ -126,10 +130,6 @@ namespace SecurityLibrary.DES
                 3, 2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
             }}
         };
-        public override string Decrypt(string cipherText, string key)
-        {
-            throw new NotImplementedException();
-        }
 
         public override string Encrypt(string plainText, string key)
         {
