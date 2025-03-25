@@ -38,9 +38,9 @@ namespace SecurityLibrary.DES
             string plaintextBits = Permute(combined, IPinvers);
             if (isHex)
             {
-                return "0x" + BinaryToHex(plaintextBits);
+                return  BittoH(plaintextBits);
             }
-            return BinaryToString(plaintextBits);
+            return BittoH(plaintextBits);
         }
 
         private string Permute(string input, int[] table)
@@ -90,18 +90,6 @@ namespace SecurityLibrary.DES
             return Permute(sboxResult.ToString(), p2);
         }
 
-        private string XOR(string a, string b)
-        {
-            if (a.Length != b.Length)
-                throw new ArgumentException("Inputs must be of equal length");
-
-            StringBuilder result = new StringBuilder(a.Length);
-            for (int i = 0; i < a.Length; i++)
-            {
-                result.Append(a[i] == b[i] ? '0' : '1');
-            }
-            return result.ToString();
-        }
 
         private string HexToBinary(string hex)
         {
@@ -285,10 +273,10 @@ namespace SecurityLibrary.DES
                 PKeyshifted = LeftCircularShift(PKeyshifted, SL[i]);
                 string PKey2 = Pconvert(PKeyshifted, PC2);
                 Emean = Pconvert(Emean, E_BitSelectionTable);
-                Emean = XORR(Emean, PKey2);
+                Emean = XOR(Emean, PKey2);
                 Emean = Sboxconvert(Emean, sBoxes);
                 Emean = Pconvert(Emean, p2);
-                Emean = XORR(Emean, shmal);
+                Emean = XOR(Emean, shmal);
                 shmal = temp;
                 temp = Emean;
             }
@@ -334,19 +322,12 @@ namespace SecurityLibrary.DES
         }
         public static string HSToBit(string hex)
         {
-            //    byte[] bytes = Enumerable.Range(0, hex.Length / 2)
-            //                             .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
-            //                             .ToArray();
-
-            //    return string.Join("", bytes.Select(b => Convert.ToString(b, 2).PadLeft(8, '0')));
             StringBuilder bitString = new StringBuilder();
 
-            // Process each pair of hex characters.
             for (int i = 0; i < hex.Length; i += 2)
             {
                 string hexByte = hex.Substring(i, 2);
                 int value = Convert.ToInt32(hexByte, 16);
-                // Convert to 8-bit binary string and append.
                 bitString.Append(Convert.ToString(value, 2).PadLeft(8, '0'));
             }
 
@@ -369,7 +350,7 @@ namespace SecurityLibrary.DES
 
             return HString;
         }
-        public static string XORR(string bitStr1, string bitStr2)
+        public static string XOR(string bitStr1, string bitStr2)
         {
             StringBuilder result = new StringBuilder();
 
