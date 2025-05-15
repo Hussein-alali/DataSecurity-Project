@@ -221,12 +221,12 @@ namespace SecurityLibrary
 
         }
 
-        public string Analyse(string largeCipher)
-        {
+        //public string Analyse(string largeCipher)
+        //{
 
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
 
 

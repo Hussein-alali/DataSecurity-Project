@@ -53,12 +53,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <!--<Compile Include="DeffieHelmanTest.cs" />
+	 <!--<Compile Include="MD5Test.cs" />
+	 <Compile Include="RC4Test.cs" />-->
+	<Compile Include="DeffieHelmanTest.cs" />
 	<Compile Include="ElGamalTest.cs" />
-	<Compile Include="MD5Test.cs" />
-	<Compile Include="RC4Test.cs" />
-	<Compile Include="RSATest.cs" />-->
-    <Compile Include="AESTest.cs" />
+	<Compile Include="RSATest.cs" />
+	<Compile Include="AESTest.cs" />
     <Compile Include="ExtendedEuclidTest.cs" />
     <Compile Include="DES3DESTest.cs" />
     <Compile Include="PlayfairTest.cs" />
@@ -68,7 +68,6 @@
     <Compile Include="ColumnarTest.cs" />
     <Compile Include="HillCipherTest.cs" />
     <Compile Include="RailFenceTest.cs" />
-    <Compile Include="RSATest.cs" />
     <Compile Include="VignereTest.cs" />
   </ItemGroup>
   <ItemGroup>
