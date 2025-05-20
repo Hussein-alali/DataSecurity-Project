@@ -100,26 +100,14 @@ namespace SecurityLibrary
 
 
 
-            public List<int> invesm2(List<int> key)
-        {
-            int detkey = detkeyF(key);
-
-
-            List<int> InverseKey = new List<int>(new int[key.Count]);
-            detkey = detInverse(detkey);
-            InverseKey[0] = ((key[3] * detkey) % 26);
-            InverseKey[1] = ((((key[1] * -1) % 26 + 26) * detkey) % 26);
-            InverseKey[2] = ((((key[2] * -1) % 26 + 26) * detkey) % 26);
-            InverseKey[3] = ((key[0] * detkey) % 26);
-            return InverseKey;
-        }
+        
         public int detkeyF(List<int> key)
         {
             int detkey = (key[0] * key[3] - key[1] * key[2]) % 26;
             if (detkey < 0)
                 detkey += 26;
             return detkey;
-        }
+        } 
         public int adjF(List<int> key, int i, int j)
         {
             List<int> listfornow = new List<int>(4);
