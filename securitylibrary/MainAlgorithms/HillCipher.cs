@@ -119,7 +119,6 @@ namespace SecurityLibrary
             if (detkey < 0)
                 detkey += 26;
             return detkey;
-            //throw new NotImplementedException();
         }
         public int adjF(List<int> key, int i, int j)
         {
@@ -145,7 +144,6 @@ namespace SecurityLibrary
             if (finalnum < 0)
                 finalnum += 26;
             return finalnum;
-            //throw new NotImplementedException();
         }
         public int detInverse(int det)
         {
